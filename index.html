@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Aktienentwicklung</title>
+    <style>
+        body { margin: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Aktienentwicklung</h1>
+    <div class="mb-3">
+        <label for="anfangsPreis">Initialer Aktienpreis (€)</label>
+        <input type="number" id="anfangsPreis" class="form-control" placeholder="z.B. 50" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="anzahlAktien">Anzahl der Aktien</label>
+        <input type="number" id="anzahlAktien" class="form-control" placeholder="z.B. 10" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="wachstumsRate">Jährliche Wachstumsrate (%)</label>
+        <input type="number" id="wachstumsRate" class="form-control" placeholder="z.B. 5" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="jahre">Laufzeit (Jahre)</label>
+        <input type="number" id="jahre" class="form-control" placeholder="z.B. 5" required>
+    </div>
+
+    <button class="btn btn-primary" onclick="aktienEntwicklungBerechnen()">Berechnen</button>
+
+    <h3 class="mt-4">Entwicklung:</h3>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Jahr</th>
+                <th>Wert der Aktien (€)</th>
+                <th>Depotkosten (€)</th>
+                <th>Nettowert des Depots (€)</th>
+            </tr>
+        </thead>
+        <tbody id="entwicklungTabelle"></tbody>
+    </table>
+
+    <h4 id="gesamtDepotWert"></h4>
+    <h4 id="gewinnAnzeige"></h4>
+</div>
+
+<script>
+    function aktienEntwicklungBerechnen() {
+        var anfangsPreis = parseFloat(document.getElementById('anfangsPreis').value);
+        var anzahlAktien = parseInt(document.getElementById('anzahlAktien').value);
+        var wachstumsRate = parseFloat(document.getElementById('wachstumsRate').value) / 100;
+        var jahre = parseInt(document.getElementById('jahre').value);
+
+        var gesamtDepotWert = 0;
+        var entwicklungTabelle = document.getElementById('entwicklungTabelle');
+        entwicklungTabelle.innerHTML = '';
+
+        var jahr = 1;
+        var tableContent = '';
+
+        while (jahr <= jahre) {
+            
+            var wertAktien = anfangsPreis * anzahlAktien * Math.pow(1 + wachstumsRate, jahr);
+
+           
+            var depotkosten = wertAktien * (wachstumsRate/anzahlAktien);
+
+         
+            var nettoWert = wertAktien - depotkosten;
+
+           
+            gesamtDepotWert = nettoWert;
+
+           
+            tableContent += `
+                <tr>
+                    <td>${jahr}</td>
+                    <td>${wertAktien.toFixed(2)}</td>
+                    <td>${depotkosten.toFixed(2)}</td>
+                    <td>${nettoWert.toFixed(2)}</td>
+                </tr>
+            `;
+
+            jahr++;
+        }
+
+        
+        entwicklungTabelle.innerHTML = tableContent;
+
+        
+        document.getElementById('gesamtDepotWert').innerText = `Gesamtwert des Depots nach ${jahre} Jahren: €${gesamtDepotWert.toFixed(2)}`;
+        var gewinn = gesamtDepotWert - (anfangsPreis * anzahlAktien);
+        document.getElementById('gewinnAnzeige').innerText = `Gesamter Gewinn/Verlust: €${gewinn.toFixed(2)}`;
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
